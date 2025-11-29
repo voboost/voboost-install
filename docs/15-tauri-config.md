@@ -26,17 +26,17 @@ This document describes the Tauri 2.x configuration for the Voboost Installer.
     "windows": [
       {
         "title": "Voboost Installer",
-        "width": 800,
-        "height": 600,
+        "width": 900,
+        "height": 700,
         "resizable": false,
         "fullscreen": false,
         "center": true,
         "decorations": true,
         "transparent": false,
-        "minWidth": 800,
-        "minHeight": 600,
-        "maxWidth": 800,
-        "maxHeight": 600
+        "minWidth": 900,
+        "minHeight": 700,
+        "maxWidth": 900,
+        "maxHeight": 700
       }
     ],
     "security": {
@@ -267,17 +267,17 @@ let adb_path = get_resource_path(&app, "adb/win/adb.exe")?;
 
 ### Fixed Size Window
 
-The installer uses a fixed 800x600 window:
+The installer uses a fixed 900x700 window:
 
 ```json
 {
-  "width": 800,
-  "height": 600,
+  "width": 900,
+  "height": 700,
   "resizable": false,
-  "minWidth": 800,
-  "minHeight": 600,
-  "maxWidth": 800,
-  "maxHeight": 600
+  "minWidth": 900,
+  "minHeight": 700,
+  "maxWidth": 900,
+  "maxHeight": 700
 }
 ```
 

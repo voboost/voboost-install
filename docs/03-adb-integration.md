@@ -110,6 +110,7 @@ use tauri::AppHandle;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AdbDevice {
     pub serial: String,
     pub state: String,  // "device", "offline", "unauthorized"
@@ -118,6 +119,7 @@ pub struct AdbDevice {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CommandResult {
     pub success: bool,
     pub exit_code: Option<i32>,
@@ -154,13 +156,42 @@ pub async fn get_devices(app: AppHandle) -> Result<Vec<AdbDevice>, String> {
     Ok(devices)
 }
 
-/// Execute ADB command
+/// Allowed ADB commands whitelist for security
+const ALLOWED_COMMANDS: &[&str] = &[
+    "start-server",
+    "devices",
+    "wait-for-device",
+    "root",
+    "remount",
+    "disable-verity",
+    "install",
+    "reboot",
+];
+
+/// Validate that the command is in the whitelist
+fn validate_adb_command(args: &[String]) -> Result<(), String> {
+    if args.is_empty() {
+        return Err("No command provided".to_string());
+    }
+
+    let command = &args[0];
+    if !ALLOWED_COMMANDS.contains(&command.as_str()) {
+        return Err(format!("Command '{}' is not allowed", command));
+    }
+
+    Ok(())
+}
+
+/// Execute ADB command (with whitelist validation)
 #[tauri::command]
 pub async fn execute_adb(
     app: AppHandle,
     args: Vec<String>,
     device_serial: Option<String>,
 ) -> Result<CommandResult, String> {
+    // Security: Validate command against whitelist
+    validate_adb_command(&args)?;
+
     let adb_path = crate::utils::platform::get_adb_path(&app)?;
 
     let mut cmd = Command::new(&adb_path);
@@ -233,6 +264,7 @@ use tauri::{AppHandle, Emitter};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct InstallStep {
     pub id: String,
     pub name_en: String,
@@ -241,6 +273,7 @@ pub struct InstallStep {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct StepResult {
     pub step_id: String,
     pub success: bool,
@@ -451,7 +484,7 @@ The Connection screen polls for devices every 2 seconds:
 ```typescript
 // src/hooks/useAdb.ts
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getDevices, startAdbServer } from '../services/adb';
 import type { AdbDevice } from '../types/adb';
 
@@ -462,34 +495,64 @@ export function useAdbDevices() {
   const [isPolling, setIsPolling] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Refs to prevent race conditions
+  const isPollingRef = useRef(false);
+  const isMountedRef = useRef(true);
+
   const startPolling = useCallback(async () => {
     setIsPolling(true);
+    isPollingRef.current = true;
     setError(null);
 
     // Start ADB server first
     try {
       await startAdbServer();
     } catch (e) {
-      setError('Failed to start ADB server');
-      setIsPolling(false);
+      if (isMountedRef.current) {
+        setError('Failed to start ADB server');
+        setIsPolling(false);
+        isPollingRef.current = false;
+      }
       return;
     }
   }, []);
 
   const stopPolling = useCallback(() => {
     setIsPolling(false);
+    isPollingRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   useEffect(() => {
     if (!isPolling) return;
 
+    let isPollInProgress = false;
+
     const poll = async () => {
+      // Prevent concurrent polls
+      if (isPollInProgress || !isPollingRef.current) return;
+
+      isPollInProgress = true;
       try {
         const deviceList = await getDevices();
-        setDevices(deviceList);
-        setError(null);
+        // Only update state if still mounted and polling
+        if (isMountedRef.current && isPollingRef.current) {
+          setDevices(deviceList);
+          setError(null);
+        }
       } catch (e) {
-        setError('Failed to get devices');
+        if (isMountedRef.current && isPollingRef.current) {
+          setError('Failed to get devices');
+        }
+      } finally {
+        isPollInProgress = false;
       }
     };
 
@@ -499,7 +562,10 @@ export function useAdbDevices() {
     // Set up interval
     const interval = setInterval(poll, POLL_INTERVAL);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      isPollInProgress = false;
+    };
   }, [isPolling]);
 
   // Get first connected device
@@ -627,6 +693,7 @@ lazy_static::lazy_static! {
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct LogEntry {
     pub timestamp: String,
     pub level: String,

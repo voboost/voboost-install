@@ -585,20 +585,19 @@ export function InstructionCarousel({ instructions }: InstructionCarouselProps) 
 ```typescript
 // src/screens/EulaScreen/EulaScreen.tsx
 
-import { useEffect, useState } from 'react';
 import { useWizard } from 'react-use-wizard';
 import {
   Button,
   Checkbox,
-  Text,
   makeStyles
 } from '@fluentui/react-components';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
 import { WizardLayout } from '../../components/WizardLayout';
 import { LanguageSelector } from '../../components/LanguageSelector';
 import { useAppStore } from '../../store';
 
-// Import EULA content
+// Import EULA content as raw markdown
 import eulaEn from '../../assets/eula/EULA.en.md?raw';
 import eulaRu from '../../assets/eula/EULA.ru.md?raw';
 
@@ -611,6 +610,18 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     backgroundColor: 'var(--colorNeutralBackground2)',
     marginBottom: '16px',
+    // Markdown content styling
+    '& h1, & h2, & h3': {
+      marginTop: '16px',
+      marginBottom: '8px',
+    },
+    '& p': {
+      marginBottom: '8px',
+    },
+    '& ul, & ol': {
+      paddingLeft: '24px',
+      marginBottom: '8px',
+    },
   },
   footer: {
     display: 'flex',
@@ -656,10 +667,9 @@ export function EulaScreen() {
         </div>
       }
     >
-      <div
-        className={styles.eulaContainer}
-        dangerouslySetInnerHTML={{ __html: eulaContent }}
-      />
+      <div className={styles.eulaContainer}>
+        <ReactMarkdown>{eulaContent}</ReactMarkdown>
+      </div>
     </WizardLayout>
   );
 }
