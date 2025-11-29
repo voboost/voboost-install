@@ -224,34 +224,34 @@ use tauri::{AppHandle, Emitter};
 use futures_util::StreamExt;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Release {
     pub version: String,
     pub channel: String,
-    #[serde(rename = "releaseDate")]
     pub release_date: String,
-    #[serde(rename = "downloadUrl")]
     pub download_url: String,
     pub sha256: String,
     pub size: u64,
-    #[serde(rename = "minAndroidVersion")]
     pub min_android_version: Option<u32>,
     pub changelog: Option<Changelog>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Changelog {
     pub en: Option<String>,
     pub ru: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ReleasesManifest {
-    #[serde(rename = "schemaVersion")]
     pub schema_version: u32,
     pub releases: Vec<Release>,
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DownloadProgress {
     pub downloaded: u64,
     pub total: u64,
@@ -415,11 +415,10 @@ export async function downloadApk(
 
     try {
       const result = await invoke<string>('download_apk', { url, expectedHash });
-      unlisten();
       return result;
-    } catch (error) {
+    } finally {
+      // Always cleanup listener, whether success or error
       unlisten();
-      throw error;
     }
   }
 

@@ -68,7 +68,7 @@ lazy_static = "1.4"
 ### 2.1 Tauri Configuration
 - [ ] Configure `tauri.conf.json`
   - [ ] App identifier: `ru.voboost.installer`
-  - [ ] Window size: 800x600
+  - [ ] Window size: 900x700
   - [ ] Window title: "Voboost Installer"
   - [ ] Disable resize (fixed size)
   - [ ] Bundle ADB resources
