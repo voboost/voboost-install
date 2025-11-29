@@ -12,7 +12,11 @@ Cross-platform desktop installer for Voboost Android application. Supports Windo
 
 ## Screenshots
 
-*Coming soon*
+The installer features a clean, modern interface with platform-specific theming:
+
+- **Windows**: Fluent Design with Segoe UI font
+- **macOS**: Apple-inspired theme with SF Pro font
+- **5-step wizard flow**: EULA → Download → Connect → Install → Complete
 
 ## Requirements
 
@@ -51,7 +55,7 @@ npm run tauri build
 ```
 voboost-install/
 ├── docs/                    # Documentation
-├── releases/                # Release manifest (releases.json)
+├── releases.json            # Release manifest
 ├── src/                     # React frontend
 │   ├── components/          # Reusable UI components
 │   ├── screens/             # Wizard screens
@@ -60,6 +64,7 @@ voboost-install/
 │   ├── store/               # Zustand state management
 │   ├── themes/              # Fluent UI themes
 │   ├── i18n/                # Translations
+│   ├── types/               # TypeScript types
 │   └── assets/              # Images, EULA files
 ├── src-tauri/               # Rust backend
 │   ├── src/                 # Rust source code
@@ -183,7 +188,7 @@ See [07-build.md](docs/07-build.md) for detailed build instructions.
 
 ### Code Style
 
-- Follow [voboost-codestyle](../voboost-codestyle/) guidelines
+- Follow [voboost-codestyle](https://github.com/voboost/voboost-codestyle) guidelines
 - Use TypeScript strict mode
 - Write accessible components (WCAG AA)
 
@@ -194,7 +199,7 @@ This project is licensed under the GPL v3.0 License - see the [LICENSE](LICENSE)
 ## Related Projects
 
 - [voboost](https://github.com/voboost/voboost) - Main Android application
-- [voboost-codestyle](../voboost-codestyle/) - Shared code style configuration
+- [voboost-codestyle](https://github.com/voboost/voboost-codestyle) - Shared code style configuration
 
 ## Support
 

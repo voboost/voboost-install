@@ -53,6 +53,8 @@ src-tauri/
 ├── src/commands/   # Tauri commands (exposed to frontend)
 ├── src/utils/      # Rust utilities
 └── resources/adb/  # Bundled ADB binaries
+
+scripts/            # Build and utility scripts
 ```
 
 ### CSS Approach
@@ -99,16 +101,19 @@ export { ComponentName } from './ComponentName';
 ### Installation Steps
 
 ```bash
-adb wait-for-device
-adb root
-adb remount
-adb disable-verity
-adb install -g voboost.apk
-adb reboot
-adb wait-for-device
-adb root
-adb remount
-adb disable-verity
+# First sequence: Prepare device and install APK
+adb wait-for-device          # Wait until device is online
+adb root                     # Restart adbd with root permissions
+adb remount                  # Remount filesystem as read-write
+adb disable-verity           # Disable verified boot for system modification
+adb install -g voboost.apk   # Install APK with all permissions
+adb reboot                   # Reboot device to apply changes
+
+# Second sequence: Clean up after reboot
+adb wait-for-device          # Wait for device to come back online
+adb root                     # Re-establish root access
+adb remount                  # Remount filesystem again
+adb disable-verity           # Ensure verity is still disabled
 ```
 
 ### Device Detection
@@ -187,3 +192,11 @@ Detailed documentation in `docs/` folder:
 6. `06-i18n.md` - Translations
 7. `07-build.md` - Build process
 8. `08-timeline.md` - Development phases
+9. `09-state-management.md` - Zustand store specification
+10. `10-components.md` - React component specifications
+11. `11-implementation-checklist.md` - Implementation checklist
+12. `12-error-handling.md` - Error handling & edge cases
+13. `13-testing-strategy.md` - Testing approach and examples
+14. `14-security.md` - Security considerations
+15. `15-tauri-config.md` - Tauri configuration details
+16. `16-troubleshooting.md` - User troubleshooting guide

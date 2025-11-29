@@ -240,7 +240,7 @@ If you need to contact support, please provide:
 ### Contact Support
 
 - **GitHub Issues**: https://github.com/voboost/voboost-install/issues
-- **Email**: support@voboost.ru (if available)
+- **Email**: support@voboost.com
 
 ### Before Contacting Support
 

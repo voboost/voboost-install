@@ -464,7 +464,9 @@ export function formatDate(dateString: string, locale: string): string {
 When releasing a new version:
 
 1. Build the APK
-2. Calculate SHA256: `sha256sum voboost-1.2.0.apk`
+2. Calculate SHA256:
+   - Linux/macOS: `sha256sum voboost-1.2.0.apk`
+   - Windows: `certutil -hashfile voboost-1.2.0.apk SHA256`
 3. Upload APK to GitHub Releases
 4. Update `releases.json` with new entry
 5. Commit and push

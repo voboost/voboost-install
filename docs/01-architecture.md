@@ -45,7 +45,15 @@ voboost-install/
 │   ├── 05-themes.md
 │   ├── 06-i18n.md
 │   ├── 07-build.md
-│   └── 08-timeline.md
+│   ├── 08-timeline.md
+│   ├── 09-state-management.md
+│   ├── 10-components.md
+│   ├── 11-implementation-checklist.md
+│   ├── 12-error-handling.md
+│   ├── 13-testing-strategy.md
+│   ├── 14-security.md
+│   ├── 15-tauri-config.md
+│   └── 16-troubleshooting.md
 │
 ├── src/                          # React frontend
 │   ├── main.tsx                  # React entry point

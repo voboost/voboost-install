@@ -6,6 +6,7 @@
 
 - Node.js 18+ and npm
 - Rust 1.70+ (install via [rustup](https://rustup.rs/))
+- ImageMagick (for icon generation, `convert` command)
 
 ### Windows
 
@@ -21,7 +22,8 @@
 
 ```bash
 # Clone repository
-cd /Users/vitaly/Yandex.Disk.localized/Проекты/voboost/voboost-install
+git clone https://github.com/voboost/voboost-install.git
+cd voboost-install
 
 # Install Node dependencies
 npm install
@@ -102,7 +104,7 @@ npm run tauri build -- --target universal-apple-darwin
         "height": 700,
         "minWidth": 800,
         "minHeight": 600,
-        "resizable": true,
+        "resizable": false,
         "center": true,
         "decorations": true,
         "transparent": false
