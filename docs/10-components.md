@@ -9,23 +9,31 @@ This document describes the React components used in the installer application.
 ```
 App
 ├── FluentProvider (theme)
-│   └── WizardLayout
-│       ├── StepIndicator
-│       └── Wizard (react-use-wizard)
-│           ├── EulaScreen
-│           │   ├── LanguageSelector
-│           │   └── EulaContent
-│           ├── DownloadScreen
-│           │   ├── VersionCard (multiple)
-│           │   └── DownloadProgress
-│           ├── ConnectionScreen
-│           │   ├── InstructionCarousel
-│           │   └── ConnectionStatus
-│           ├── InstallScreen
-│           │   ├── InstallStep (multiple)
-│           │   └── LogViewer
-│           └── CompleteScreen
-│               └── NextStepsCard
+│   └── Wizard (react-use-wizard)
+│       ├── EulaScreen
+│       │   ├── WizardLayout
+│       │   │   ├── StepIndicator
+│       │   │   ├── LanguageSelector
+│       │   │   └── EulaContent
+│       ├── DownloadScreen
+│       │   ├── WizardLayout
+│       │   │   ├── StepIndicator
+│       │   │   ├── VersionCard (multiple)
+│       │   │   └── DownloadProgress
+│       ├── ConnectionScreen
+│       │   ├── WizardLayout
+│       │   │   ├── StepIndicator
+│       │   │   ├── InstructionCarousel
+│       │   │   └── ConnectionStatus
+│       ├── InstallScreen
+│       │   ├── WizardLayout
+│       │   │   ├── StepIndicator
+│       │   │   ├── InstallStep (multiple)
+│       │   │   └── LogViewer
+│       └── CompleteScreen
+│           ├── WizardLayout
+│           │   ├── StepIndicator
+│           │   └── NextStepsCard
 ```
 
 ## Shared Components

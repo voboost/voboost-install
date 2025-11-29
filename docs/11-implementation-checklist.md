@@ -210,7 +210,7 @@ lazy_static = "1.4"
 - [ ] Create GitHub Release
 
 ### 7.3 Release Files
-- [ ] Create initial `releases/releases.json`
+- [ ] Create initial `releases.json`
 - [ ] Document release process
 - [ ] Create `scripts/update-releases.py`
 

@@ -375,7 +375,7 @@ cargo audit
 If you discover a security vulnerability:
 
 1. **DO NOT** open a public GitHub issue
-2. **Email** security@voboost.ru (or appropriate contact)
+2. **Email** security@voboost.com
 3. **Include** detailed description and steps to reproduce
 4. **Wait** for acknowledgment before disclosure
 
