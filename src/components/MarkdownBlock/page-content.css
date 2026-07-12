@@ -1,0 +1,50 @@
+.page-content__h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+}
+
+.page-content__h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+    line-height: 1.5;
+}
+
+.page-content__p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+}
+
+.page-content__ul,
+.page-content__ol {
+    padding-left: 24px;
+    margin: 0.5ex 0 1ex;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.page-content__a {
+    color: var(--colorBrandForeground1);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.page-content__a:hover {
+    text-decoration: underline;
+}
+
+.page-content__blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    border-left: 4px solid var(--colorBrandStroke1);
+    background-color: var(--colorNeutralBackground2);
+    font-style: italic;
+    color: var(--colorNeutralForeground2);
+}
+
+.page-content__strong {
+    font-weight: 600;
+}

@@ -1,0 +1,31 @@
+.page-title__h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+.page-title__p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+}
+
+.page-title__a {
+    color: var(--colorBrandForeground1);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.page-title__a:hover {
+    text-decoration: underline;
+}
+
+.page-title__blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    border-left: 4px solid var(--colorBrandStroke1);
+    background-color: var(--colorNeutralBackground2);
+    font-style: italic;
+    color: var(--colorNeutralForeground2);
+}

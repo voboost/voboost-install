@@ -1,0 +1,32 @@
+/* License content: headings same size as body text, just bold */
+.license-content__h1,
+.license-content__h2,
+.license-content__h3 {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 16px 0 8px 0;
+}
+
+.license-content__p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 0 0 8px 0;
+}
+
+.license-content__ul,
+.license-content__ol {
+    padding-left: 24px;
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.license-content__a {
+    color: var(--colorBrandForeground1);
+    text-decoration: none;
+}
+
+.license-content__a:hover {
+    text-decoration: underline;
+}

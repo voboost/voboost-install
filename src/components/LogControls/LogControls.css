@@ -1,0 +1,11 @@
+.log-controls {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+/* Fix tooltip font size to match main text - target Fluent UI tooltip */
+[role="tooltip"] {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
