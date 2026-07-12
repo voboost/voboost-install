@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-11T16:50:44Z",
+  "releases": [
+    {
+      "component": "app",
+      "track": "testing",
+      "version": "1.0.0-beta6",
+      "releasedAt": "2026-07-11",
+      "downloadUrl": "file:///data/local/tmp/voboost-releases/voboost.apk",
+      "sha256": "36bfe2679bc4df76fa5b1e45b750bb188e5ab064050b99e5de3c19219e66054a",
+      "size": 38095569,
+      "minAndroidVersion": 28,
+      "changelog": {
+        "en": "launcher-allapps agent: show all installed apps in launcher",
+        "ru": "launcher-allapps: показ всех установленных приложений"
+      },
+      "installScenario": "v1",
+      "uninstallScenario": "v1"
+    },
+    {
+      "component": "inject",
+      "track": "testing",
+      "version": "1.0.0-beta4",
+      "releasedAt": "2026-07-05",
+      "downloadUrl": "file:///data/local/tmp/voboost-releases/voboost-inject.apk",
+      "sha256": "225605b442c9ebba24dc0ce8f5f06c2438acf70eacd3f2e4bf847c264b539762",
+      "size": 15798663,
+      "minAndroidVersion": 28,
+      "changelog": {
+        "en": "OTA-enabled build",
+        "ru": "Сборка с включённым OTA"
+      },
+      "installScenario": "v1",
+      "uninstallScenario": "v1"
+    }
+  ],
+  "scenarios": {
+    "install": {
+      "v1": [
+        {
+          "do": "root"
+        },
+        {
+          "do": "install-apk"
+        }
+      ]
+    },
+    "uninstall": {
+      "v1": [
+        {
+          "do": "uninstall-apk"
+        }
+      ]
+    }
+  }
+}
