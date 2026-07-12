@@ -1,0 +1,58 @@
+{
+    "schemaVersion": 1,
+    "generatedAt": "2026-07-05T06:00:00Z",
+    "releases": [
+        {
+            "component": "app",
+            "track": "production",
+            "version": "1.2.0",
+            "releasedAt": "2024-11-15",
+            "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.2.0/voboost-1.2.0.apk",
+            "sha256": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd",
+            "size": 15728640,
+            "minAndroidVersion": 29,
+            "changelog": {
+                "en": "- New dashboard interface\n- Improved navigation system\n- Bug fixes and performance improvements",
+                "ru": "- Новый интерфейс панели\n- Улучшенная система навигации\n- Исправления ошибок и улучшение производительности"
+            }
+        },
+        {
+            "component": "app",
+            "track": "production",
+            "version": "1.1.0",
+            "releasedAt": "2024-10-01",
+            "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.1.0/voboost-1.1.0.apk",
+            "sha256": "b2c3d4e5f6789012345678901234567890123456789012345678901234abcdef",
+            "size": 14680064,
+            "minAndroidVersion": 29,
+            "changelog": {
+                "en": "- Vehicle diagnostics feature\n- Settings backup\n- Stability improvements",
+                "ru": "- Функция диагностики автомобиля\n- Резервное копирование настроек\n- Улучшение стабильности"
+            }
+        },
+        {
+            "component": "app",
+            "track": "testing",
+            "version": "1.3.0-beta",
+            "releasedAt": "2024-12-01",
+            "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.3.0-beta/voboost-1.3.0-beta.apk",
+            "sha256": "c3d4e5f6789012345678901234567890123456789012345678901234567890abcd",
+            "size": 16000000,
+            "minAndroidVersion": 29,
+            "changelog": {
+                "en": "- Beta feature preview",
+                "ru": "- Предпросмотр бета-функций"
+            }
+        },
+        {
+            "component": "inject",
+            "track": "production",
+            "version": "1.2.0",
+            "releasedAt": "2024-11-15",
+            "downloadUrl": "https://github.com/voboost/voboost-inject/releases/download/v1.2.0/voboost-inject-1.2.0.apk",
+            "sha256": "d4e5f6789012345678901234567890123456789012345678901234567890abcdef",
+            "size": 15000000,
+            "minAndroidVersion": 28
+        }
+    ]
+}

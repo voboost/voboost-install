@@ -1,0 +1,48 @@
+.complete-screen__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.complete-screen__success {
+    text-align: center;
+    margin: 16px 0;
+}
+
+.complete-screen__icon {
+    color: var(--colorPaletteGreenForeground1);
+    font-size: 64px;
+}
+
+.complete-screen__next-steps {
+    margin-top: 16px;
+    padding: 16px;
+}
+
+.complete-screen__steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 16px;
+}
+
+.complete-screen__step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.complete-screen__step-number {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--colorBrandBackground);
+    color: var(--colorNeutralForegroundOnBrand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+}

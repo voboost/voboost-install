@@ -1,0 +1,50 @@
+[package]
+name = "voboost-install"
+version = "1.0.0"
+description = "Voboost Installer"
+authors = ["Voboost Team"]
+edition = "2021"
+rust-version = "1.70"
+
+[lib]
+name = "voboost_install_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["devtools"] }
+tauri-plugin-os = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-cli = "2"
+tauri-plugin-clipboard-manager = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", features = ["json", "stream", "rustls-tls"], default-features = false }
+sha2 = "0.10"
+hex = "0.4"
+tokio = { version = "1", features = ["full"] }
+futures-util = "0.3"
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2"
+log = "0.4"
+# Unified OTA manifest signature verification (ed25519 detached signature over
+# the exact bytes of releases/manifest.json). The public key is a PEM
+# SubjectPublicKeyInfo (ed25519) embedded at build time via include_bytes!.
+# `ed25519-dalek` performs the raw 64-byte signature verification; `pkcs8`
+# parses the SPKI PEM into the raw 32-byte public key.
+ed25519-dalek = { version = "2", default-features = false, features = ["std"] }
+pkcs8 = { version = "0.10", features = ["pem", "alloc"] }
+base64ct = { version = "1", default-features = false, features = ["alloc"] }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

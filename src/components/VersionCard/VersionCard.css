@@ -1,0 +1,54 @@
+.version-card {
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 12px;
+    border: 1px solid var(--colorNeutralStroke1);
+    transition: all 0.2s ease;
+}
+
+.version-card:hover {
+    border-color: var(--colorBrandStroke1);
+    box-shadow: var(--shadow4);
+}
+
+.version-card_selected {
+    border-color: var(--colorBrandBackground);
+    box-shadow: var(--shadow8);
+    background-color: var(--colorBrandBackground2);
+}
+
+.version-card__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.version-card__version-text {
+    font-size: 20px;
+    line-height: 1.5;
+}
+
+.version-card__description-text {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.version-card__changelog {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--colorNeutralStroke2);
+    color: var(--colorNeutralForeground2);
+}
+
+.version-card__changelog-text {
+    font-size: 16px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.version-card__selected-indicator {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--colorBrandForeground1);
+}

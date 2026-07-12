@@ -1,0 +1,21 @@
+.install-screen__steps {
+    padding: 8px 0;
+}
+
+.install-screen__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.install-screen__footer-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.install-screen__footer-right {
+    display: flex;
+    gap: 12px;
+}

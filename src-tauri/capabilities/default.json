@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.tauri.app/config/2/capability",
+    "identifier": "default",
+    "description": "Default capabilities for the installer",
+    "windows": [
+        "main"
+    ],
+    "permissions": [
+        "core:default",
+        "core:event:default",
+        "core:window:default",
+        "os:default",
+        "dialog:default",
+        "clipboard-manager:allow-write-text",
+        "allow-exit-app",
+        "allow-open-url",
+        "allow-get-platform-override",
+        "allow-has-usb-type-c",
+        "allow-start-adb-server",
+        "allow-get-devices",
+        "allow-execute-adb",
+        "allow-fetch-releases",
+        "allow-read-local-releases",
+        "allow-download-apk",
+        "allow-check-existing-apk",
+        "allow-get-install-steps",
+        "allow-execute-install-step"
+    ]
+}

@@ -1,0 +1,69 @@
+[[permission]]
+identifier = "allow-exit-app"
+description = "Allow the exit_app command"
+commands.allow = ["exit_app"]
+
+[[permission]]
+identifier = "allow-open-url"
+description = "Allow the open_url command"
+commands.allow = ["open_url"]
+
+[[permission]]
+identifier = "allow-get-platform-override"
+description = "Allow the get_platform_override command"
+commands.allow = ["get_platform_override"]
+
+[[permission]]
+identifier = "allow-has-usb-type-c"
+description = "Allow the has_usb_type_c command"
+commands.allow = ["has_usb_type_c"]
+
+[[permission]]
+identifier = "allow-start-adb-server"
+description = "Allow the start_adb_server command"
+commands.allow = ["start_adb_server"]
+
+[[permission]]
+identifier = "allow-get-devices"
+description = "Allow the get_devices command"
+commands.allow = ["get_devices"]
+
+[[permission]]
+identifier = "allow-execute-adb"
+description = "Allow the execute_adb command"
+commands.allow = ["execute_adb"]
+
+[[permission]]
+identifier = "allow-fetch-releases"
+description = "Allow the fetch_releases command"
+commands.allow = ["fetch_releases"]
+
+[[permission]]
+identifier = "allow-read-local-releases"
+description = "Allow the read_local_releases command"
+commands.allow = ["read_local_releases"]
+
+[[permission]]
+identifier = "allow-download-apk"
+description = "Allow the download_apk command"
+commands.allow = ["download_apk"]
+
+[[permission]]
+identifier = "allow-check-existing-apk"
+description = "Allow the check_existing_apk command"
+commands.allow = ["check_existing_apk"]
+
+[[permission]]
+identifier = "allow-get-install-steps"
+description = "Allow the get_install_steps command"
+commands.allow = ["get_install_steps"]
+
+[[permission]]
+identifier = "allow-get-uninstall-steps"
+description = "Allow the get_uninstall_steps command"
+commands.allow = ["get_uninstall_steps"]
+
+[[permission]]
+identifier = "allow-execute-install-step"
+description = "Allow the execute_install_step command"
+commands.allow = ["execute_install_step"]

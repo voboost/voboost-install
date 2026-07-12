@@ -1,0 +1,23 @@
+:root {
+    --layout-horizontal-padding: 24px;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--colorNeutralBackground1);
+    border-top: 1px solid var(--colorNeutralStroke1);
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* Fix tooltip font size to match main text (16px) */
+[role="tooltip"] {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}

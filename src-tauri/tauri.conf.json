@@ -1,0 +1,133 @@
+{
+    "$schema": "https://schema.tauri.app/config/2",
+    "productName": "voboost-install",
+    "version": "1.0.0",
+    "identifier": "ru.voboost.install",
+    "build": {
+        "beforeDevCommand": "npm run dev",
+        "devUrl": "http://localhost:5173",
+        "beforeBuildCommand": "node src/build/stage-resources.js",
+        "frontendDist": "dist"
+    },
+    "app": {
+        "windows": [],
+        "security": {
+            "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:"
+        }
+    },
+    "bundle": {
+        "active": true,
+        "targets": [
+            "nsis",
+            "app"
+        ],
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ],
+        "resources": [
+            "resources-staged/**/*"
+        ],
+        "category": "Utility",
+        "shortDescription": "Install Voboost on your vehicle",
+        "longDescription": "Cross-platform installer for Voboost Android application. Supports Windows and macOS.",
+        "copyright": "© 2026 Voboost",
+        "windows": {
+            "nsis": {
+                "installerIcon": "icons/icon.ico",
+                "installMode": "currentUser",
+                "languages": [
+                    "English",
+                    "Russian"
+                ],
+                "displayLanguageSelector": false
+            },
+            "wix": null
+        },
+        "macOS": {
+            "minimumSystemVersion": "11.0"
+        },
+        "linux": {
+            "appimage": {
+                "bundleMediaFramework": false
+            }
+        }
+    },
+    "plugins": {
+        "cli": {
+            "description": "Voboost Installer",
+            "args": [
+                {
+                    "name": "help",
+                    "short": "h",
+                    "description": "Show help and exit",
+                    "takesValue": false
+                },
+                {
+                    "name": "install",
+                    "short": "i",
+                    "description": "Full headless install: APK + daemon + agents + manifest + init hook (path to .apk)",
+                    "takesValue": true
+                },
+                {
+                    "name": "restore",
+                    "short": "r",
+                    "description": "Restore the init hook after a system OTA (headless)",
+                    "takesValue": false
+                },
+                {
+                    "name": "uninstall",
+                    "short": "U",
+                    "description": "Full headless teardown: stop daemon, remove init hook, wipe /data/voboost, uninstall APK, reboot",
+                    "takesValue": false
+                },
+                {
+                    "name": "daemon-bin",
+                    "description": "Local path to voboost-inject daemon binary (provision)",
+                    "takesValue": true
+                },
+                {
+                    "name": "agents-dir",
+                    "description": "Local directory of agent files (provision)",
+                    "takesValue": true
+                },
+                {
+                    "name": "manifest",
+                    "description": "Local path to manifest.json (provision)",
+                    "takesValue": true
+                },
+                {
+                    "name": "manifest-sig",
+                    "description": "Local path to manifest.sig (provision)",
+                    "takesValue": true
+                },
+                {
+                    "name": "release-key",
+                    "description": "Local path to release-public.pem for OTA signature verification (provision)",
+                    "takesValue": true
+                },
+                {
+                    "name": "lang",
+                    "short": "l",
+                    "description": "Language for CLI output (en or ru)",
+                    "takesValue": true
+                },
+                {
+                    "name": "dry-run",
+                    "short": "d",
+                    "description": "Simulate actions without executing them on a real device",
+                    "takesValue": false
+                },
+                {
+                    "name": "platform",
+                    "short": "p",
+                    "description": "Override platform for testing cable messages (win-old, win-new, mac-old, mac-new)",
+                    "takesValue": true
+                }
+            ]
+        }
+    }
+}

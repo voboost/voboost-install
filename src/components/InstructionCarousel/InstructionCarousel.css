@@ -1,0 +1,74 @@
+.instruction-carousel {
+    display: grid;
+    grid-template-rows: 1fr 24px;
+    width: 100%;
+    height: 100%;
+}
+
+.instruction-carousel__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.instruction-carousel .page-content__img {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: var(--shadow4);
+}
+
+.instruction-carousel .page-content__h1 {
+    margin-bottom: 12px;
+}
+
+.instruction-carousel__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.instruction-carousel__dots {
+    display: flex;
+    gap: 8px;
+}
+
+.instruction-carousel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--colorNeutralStroke1);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.instruction-carousel__dot_active {
+    background-color: var(--colorBrandBackground);
+    transform: scale(1.2);
+}
+
+.instruction-carousel__dot:hover:not(.instruction-carousel__dot_active) {
+    background-color: var(--colorNeutralStroke1Hover);
+}
+
+/* Make arrow icons larger and bolder */
+.instruction-carousel__arrow .fui-Button__icon,
+.instruction-carousel__arrow svg {
+    width: 32px;
+    height: 32px;
+}
+
+.instruction-carousel__arrow svg {
+    width: 100%;
+    height: 100%;
+
+    stroke-width: 2.5 !important;
+}

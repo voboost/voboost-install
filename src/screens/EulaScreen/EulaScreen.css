@@ -1,0 +1,45 @@
+.eula-screen__license-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--layout-horizontal-padding);
+    border: 1px solid var(--colorNeutralStroke1);
+    border-radius: 4px;
+    background-color: var(--colorNeutralBackground2);
+    font-size: 18px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+}
+
+.eula-screen__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.eula-screen__footer-left {
+    display: flex;
+    gap: 8px;
+}
+
+.eula-screen__footer-actions {
+    display: flex;
+    align-items: center;
+}
+
+.eula-screen__checkbox label {
+    font-size: 18px !important;
+}
+
+.eula-screen__checkbox-wrapper {
+    margin-right: 12px;
+}
+
+.eula-screen__content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 0;
+}

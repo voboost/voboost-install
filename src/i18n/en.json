@@ -1,0 +1,91 @@
+{
+    "app": {
+        "title": "Voboost Installer",
+        "version": "Version {{version}}"
+    },
+    "common": {
+        "next": "Next",
+        "back": "Back",
+        "cancel": "Cancel",
+        "exit": "Exit",
+        "finish": "Finish",
+        "retry": "Retry",
+        "close": "Close",
+        "copyLog": "Copy Log",
+        "showLog": "Show Log",
+        "hideLog": "Hide Log",
+        "copied": "Copied!",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "uninstall": "Uninstall"
+    },
+    "steps": {
+        "license": "License",
+        "download": "Download",
+        "connect": "Connect",
+        "install": "Install",
+        "done": "Done"
+    },
+    "eula": {
+        "title": "License Agreement",
+        "subtitle": "To proceed with the installation of the Voboost software modifications onto your Voyah multimedia system, you must read and agree to the following terms and conditions:",
+        "accept": "I accept the license agreement",
+        "mustAccept": "You must accept the license agreement to continue",
+        "scrollToRead": "Scroll to read the full agreement"
+    },
+    "welcome": {
+        "title": "Voboost Install",
+        "description": "We are about to install the Voboost application onto your vehicle.",
+        "description2": "This software significantly expands your multimedia system's capabilities.",
+        "learnMore": "You can read more details about the features at voboost.ru/features",
+        "learnMoreDesc": "You can read more details about the features at ",
+        "button": "Start Installation"
+    },
+    "download": {
+        "title": "Select Version",
+        "subtitle": "Select a version to install from the list below, which is loaded from the signed OTA manifest on github.com. Or select a manifest.json file, or a local APK.",
+        "track": "Track",
+        "track_production": "Production",
+        "track_testing": "Testing",
+        "track_dev": "Dev",
+        "releaseDate": "Released {{date}}",
+        "fileSize": "{{size}}",
+        "changelog": "What's new",
+        "button": "Download APK",
+        "downloading": "Downloading...",
+        "downloadProgress": "{{downloaded}} / {{total}}",
+        "verifying": "Verifying...",
+        "ready": "Ready to install. APK downloaded and verified successfully.",
+        "alreadyDownloaded": "Already downloaded",
+        "selectVersion": "Select a version to download",
+        "localJson": "Choose manifest.json",
+        "localApk": "Choose local APK",
+        "noReleases": "No releases available",
+        "fetchError": "Failed to fetch or verify the OTA manifest. Please check your internet connection.",
+        "downloadError": "Download failed",
+        "hashMismatch": "File verification failed. Please try again."
+    },
+    "connection": {
+        "title": "Connect Your Vehicle",
+        "subtitle": "Follow these steps to connect your car's head unit"
+    },
+    "install": {
+        "title": "Installing Voboost",
+        "subtitle": "Applying modifications to the vehicle multimedia unit",
+        "button": "Start Installation",
+        "success": "Installation completed successfully!"
+    },
+    "complete": {
+        "title": "Installation Complete!",
+        "subtitle": "Voboost has been successfully installed on your vehicle.",
+        "button": "Finish",
+        "nextSteps": "What's next?",
+        "instructions": "The system will automatically reboot if it hasn't already. Once booted, you will find the Voboost application in your app drawer."
+    },
+    "language": {
+        "select": "Language",
+        "en": "English",
+        "ru": "Русский"
+    }
+}
