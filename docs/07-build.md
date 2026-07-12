@@ -37,7 +37,7 @@ rustup target add aarch64-apple-darwin
 
 ```bash
 # Start development server with hot reload
-npm run tauri dev
+npm run dev
 
 # The app will open automatically
 # Frontend changes hot reload instantly
@@ -50,14 +50,14 @@ npm run tauri dev
 
 ```bash
 # Build release version
-npm run tauri build
+npm run build
 ```
 
 ### Windows Builds (on Windows)
 
 ```bash
 # x64 build (most common)
-npm run tauri build -- --target x86_64-pc-windows-msvc
+npm run build -- --target x86_64-pc-windows-msvc
 
 # Output files:
 # - src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/Voboost Installer_1.0.0_x64_en-US.msi
@@ -68,13 +68,13 @@ npm run tauri build -- --target x86_64-pc-windows-msvc
 
 ```bash
 # Intel Mac (x64)
-npm run tauri build -- --target x86_64-apple-darwin
+npm run build -- --target x86_64-apple-darwin
 
 # Apple Silicon (ARM64)
-npm run tauri build -- --target aarch64-apple-darwin
+npm run build -- --target aarch64-apple-darwin
 
 # Universal binary (both architectures)
-npm run tauri build -- --target universal-apple-darwin
+npm run build -- --target universal-apple-darwin
 
 # Output files:
 # - src-tauri/target/universal-apple-darwin/release/bundle/dmg/Voboost Installer_1.0.0_universal.dmg
@@ -190,47 +190,11 @@ npm run tauri build -- --target universal-apple-darwin
 
 **Recommended**: Use universal DMG for distribution (works on Intel and Apple Silicon).
 
-## Icon Generation
+## Icon Handling
 
-Tauri requires PNG icons. Generate from SVG source:
+Tauri requires PNG and ICO/ICNS icons. Our icons are pre-generated from the main `voboost-logo` SVG source and placed directly in the `src-tauri/icons/` directory.
 
-```bash
-#!/bin/bash
-# scripts/generate-icons.sh
-
-SVG_SOURCE="src/assets/images/logo.svg"
-ICONS_DIR="src-tauri/icons"
-
-# Create icons directory
-mkdir -p "$ICONS_DIR"
-
-# Generate PNG icons using rsvg-convert (install: brew install librsvg)
-rsvg-convert -w 32 -h 32 "$SVG_SOURCE" > "$ICONS_DIR/32x32.png"
-rsvg-convert -w 128 -h 128 "$SVG_SOURCE" > "$ICONS_DIR/128x128.png"
-rsvg-convert -w 256 -h 256 "$SVG_SOURCE" > "$ICONS_DIR/128x128@2x.png"
-rsvg-convert -w 512 -h 512 "$SVG_SOURCE" > "$ICONS_DIR/icon.png"
-
-# Generate ICO for Windows (requires ImageMagick)
-convert "$ICONS_DIR/icon.png" -define icon:auto-resize=256,128,64,48,32,16 "$ICONS_DIR/icon.ico"
-
-# Generate ICNS for macOS (requires iconutil)
-ICONSET_DIR="$ICONS_DIR/icon.iconset"
-mkdir -p "$ICONSET_DIR"
-rsvg-convert -w 16 -h 16 "$SVG_SOURCE" > "$ICONSET_DIR/icon_16x16.png"
-rsvg-convert -w 32 -h 32 "$SVG_SOURCE" > "$ICONSET_DIR/icon_16x16@2x.png"
-rsvg-convert -w 32 -h 32 "$SVG_SOURCE" > "$ICONSET_DIR/icon_32x32.png"
-rsvg-convert -w 64 -h 64 "$SVG_SOURCE" > "$ICONSET_DIR/icon_32x32@2x.png"
-rsvg-convert -w 128 -h 128 "$SVG_SOURCE" > "$ICONSET_DIR/icon_128x128.png"
-rsvg-convert -w 256 -h 256 "$SVG_SOURCE" > "$ICONSET_DIR/icon_128x128@2x.png"
-rsvg-convert -w 256 -h 256 "$SVG_SOURCE" > "$ICONSET_DIR/icon_256x256.png"
-rsvg-convert -w 512 -h 512 "$SVG_SOURCE" > "$ICONSET_DIR/icon_256x256@2x.png"
-rsvg-convert -w 512 -h 512 "$SVG_SOURCE" > "$ICONSET_DIR/icon_512x512.png"
-rsvg-convert -w 1024 -h 1024 "$SVG_SOURCE" > "$ICONSET_DIR/icon_512x512@2x.png"
-iconutil -c icns "$ICONSET_DIR" -o "$ICONS_DIR/icon.icns"
-rm -rf "$ICONSET_DIR"
-
-echo "Icons generated successfully!"
-```
+You do not need to run any scripts to generate them. If you need to update the logo, use a tool like [tauri-plugin-icon](https://github.com/tauri-apps/tauri-plugin-icon) or `rsvg-convert` manually to update the files in `src-tauri/icons/`.
 
 ## ADB Binary Preparation
 
@@ -238,7 +202,7 @@ Download platform-specific ADB binaries:
 
 ```bash
 #!/bin/bash
-# scripts/prepare-adb.sh
+# src/build/prepare-adb.sh
 
 ADB_VERSION="35.0.1"  # Check for latest version
 RESOURCES_DIR="src-tauri/resources/adb"
@@ -339,10 +303,10 @@ jobs:
         run: npm ci
 
       - name: Prepare ADB
-        run: bash scripts/prepare-adb.sh
+        run: bash src/build/prepare-adb.sh
 
       - name: Build
-        run: npm run tauri build
+        run: npm run build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -372,10 +336,10 @@ jobs:
         run: npm ci
 
       - name: Prepare ADB
-        run: bash scripts/prepare-adb.sh
+        run: bash src/build/prepare-adb.sh
 
       - name: Build universal binary
-        run: npm run tauri build -- --target universal-apple-darwin
+        run: npm run build -- --target universal-apple-darwin
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -433,7 +397,7 @@ rustup target add x86_64-pc-windows-gnu
 brew install mingw-w64
 
 # Try to build (may have issues)
-npm run tauri build -- --target x86_64-pc-windows-gnu
+npm run build -- --target x86_64-pc-windows-gnu
 ```
 
 **Known Issues**:
@@ -454,7 +418,7 @@ Run Windows in a VM on your Mac:
 # Inside Windows VM
 cd /path/to/project
 npm install
-npm run tauri build
+npm run build
 ```
 
 **Pros**:
@@ -486,7 +450,7 @@ Use a cloud Windows VM or remote Windows PC:
 git clone https://github.com/user/voboost-install.git
 cd voboost-install
 npm install
-npm run tauri build
+npm run build
 ```
 
 **Cloud Options**:
@@ -503,8 +467,8 @@ npm run tauri build
 ┌─────────────────────────────────────────────────────────────┐
 │                    Your Mac (Development)                    │
 │  ┌─────────────────────────────────────────────────────┐    │
-│  │  npm run tauri dev    →  Test on macOS              │    │
-│  │  npm run tauri build  →  Build macOS .dmg           │    │
+│  │  npm run dev    →  Test on macOS              │    │
+│  │  npm run build  →  Build macOS .dmg           │    │
 │  └─────────────────────────────────────────────────────┘    │
 │                           │                                  │
 │                           ▼ git push                         │
@@ -526,8 +490,8 @@ npm run tauri build
 ```
 
 **Daily Development**:
-1. Develop and test on macOS with `npm run tauri dev`
-2. Build macOS version locally with `npm run tauri build`
+1. Develop and test on macOS with `npm run dev`
+2. Build macOS version locally with `npm run build`
 3. Push to GitHub when ready
 4. GitHub Actions builds Windows version
 5. Download Windows installer from Actions artifacts
@@ -578,7 +542,7 @@ rustup update
 
 # Clean build
 cargo clean
-npm run tauri build
+npm run build
 ```
 
 **Error: Node modules issues**

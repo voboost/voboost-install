@@ -1,510 +1,360 @@
-# Releases JSON Schema
+# Unified OTA Manifest Schema (v1)
 
 ## Overview
 
-The installer fetches available versions from a `releases.json` file hosted on GitHub. This file contains metadata about all available releases including download URLs and checksums.
+The installer fetches available versions from a **signed** unified OTA
+manifest hosted on GitHub. The manifest is a single document consumed by both
+`voboost` (the Android app) and `voboost-install` (the desktop installer), so
+both clients discover updates from the same source of truth.
+
+The manifest is **ed25519-signed** (detached signature over the exact
+`manifest.json` bytes). The installer verifies the signature against the
+embedded `config/release-public.pem` before parsing the manifest, closing the
+previous "unsigned manifest" gap.
 
 ## Hosting Location
 
-### releases.json
+### Manifest + signature
 
-The `releases.json` file is hosted in the **root of the installer repository**:
-
-```
-voboost-install/releases.json
-```
-
-**Raw URL**:
-```
-https://raw.githubusercontent.com/voboost/voboost-install/main/releases.json
-```
-
-### APK Files
-
-APK files are hosted in the **main app repository** as GitHub Release assets:
+The unified manifest and its detached signature live in
+`voboost-install/releases/` (the source-of-truth repo, per design §0.1):
 
 ```
-https://github.com/voboost/voboost/releases/download/v1.2.0/voboost-1.2.0.apk
+voboost-install/releases/manifest.json
+voboost-install/releases/manifest.sig
 ```
 
-### Repository Structure
+**Raw URLs** (GitHub raw, CDN-cached ~5 min — acceptable per design §0.6):
 
 ```
-voboost/                          # Main Android app repository
-├── app/                          # Android app source
-└── (GitHub Releases)             # APK files as release assets
-    └── v1.2.0/
-        └── voboost-1.2.0.apk
-
-voboost-install/                  # Installer repository
-├── releases.json                 # Release manifest (in root, points to voboost repo)
-├── README.md
-├── src/                          # Installer source
-└── ...
+https://raw.githubusercontent.com/voboost/voboost-install/main/releases/manifest.json
+https://raw.githubusercontent.com/voboost/voboost-install/main/releases/manifest.sig
 ```
 
-### Why This Separation?
+### Local testing URLs
 
-1. **Separation of concerns** - App and installer are different projects
-2. **Independent versioning** - Installer can be updated without new APK
-3. **Smaller installer repo** - No large APK files in installer repo
-4. **Flexible updates** - Can update releases.json without rebuilding installer
+For local testing (design §0.3), the manifest URL accepts the `file://`
+scheme so the fetch layer reads from disk instead of HTTP — no network, no
+cache, instant updates on every write:
 
-## JSON Schema
+```
+file:///path/to/voboost-install/releases/manifest.json
+file:///path/to/voboost-install/releases/manifest.sig
+```
+
+### APK files
+
+APK files are hosted as **GitHub Release assets** (not committed to the repo).
+Each component repo tags a release (`voboost-v1.0.0-beta3`,
+`voboost-inject-v1.0.0-beta3`) and uploads its APK as an asset. The manifest
+references the asset download URLs. For local testing, APKs can also be
+`file://` paths.
+
+## Trust model
+
+- **One ed25519 keypair** is the release signing key, generated and stored in
+  `voboost-install/config/` (design §0.5). `release-public.pem` is committed
+  (not secret); `release-private.pem` is gitignored and stored as a CI secret.
+- The signature is a **raw 64-byte detached ed25519 signature** over the exact
+  bytes of `manifest.json`, produced by:
+  ```
+  openssl pkeyutl -sign -inkey config/release-private.pem \
+    -rawin -in releases/manifest.json -out releases/manifest.sig
+  ```
+- The installer embeds `config/release-public.pem` at build time via
+  `include_bytes!` and verifies the signature before parsing. If verification
+  fails, `fetch_releases` returns an error and no manifest is parsed.
+- The signature URL is **derived** from the manifest URL by replacing `.json`
+  with `.sig`, so only one config key (`MANIFEST_URL`) is needed.
+
+## Schema (v1)
 
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Voboost Releases",
+  "title": "Voboost Unified OTA Manifest v1",
   "type": "object",
   "required": ["schemaVersion", "releases"],
   "properties": {
     "schemaVersion": {
       "type": "integer",
       "description": "Schema version for backward compatibility",
-      "minimum": 1
+      "minimum": 1,
+      "maximum": 1
+    },
+    "generatedAt": {
+      "type": "string",
+      "description": "Manifest generation timestamp (ISO 8601)",
+      "format": "date-time"
     },
     "releases": {
       "type": "array",
-      "description": "List of available releases",
-      "items": {
-        "$ref": "#/definitions/Release"
-      }
-    }
+      "description": "One entry per (component, track)",
+      "items": { "$ref": "#/definitions/Release" }
+    },
+    "scenarios": { "$ref": "#/definitions/Scenarios" }
   },
   "definitions": {
     "Release": {
       "type": "object",
-      "required": ["version", "channel", "releaseDate", "downloadUrl", "sha256", "size"],
+      "required": [
+        "component", "track", "version", "releasedAt",
+        "downloadUrl", "sha256", "size"
+      ],
       "properties": {
+        "component": {
+          "type": "string",
+          "enum": ["app", "inject"],
+          "description": "Which artifact the entry describes. Orthogonal to track."
+        },
+        "track": {
+          "type": "string",
+          "enum": ["dev", "testing", "production"],
+          "description": "Release track, filtered client-side by a setting."
+        },
         "version": {
           "type": "string",
           "description": "Semantic version",
-          "pattern": "^\\d+\\.\\d+\\.\\d+(-beta\\.\\d+)?$",
-          "examples": ["1.2.0", "1.3.0-beta.1"]
+          "examples": ["1.0.0", "1.0.0-beta3"]
         },
-        "channel": {
+        "releasedAt": {
           "type": "string",
-          "description": "Release channel",
-          "enum": ["stable", "beta"]
-        },
-        "releaseDate": {
-          "type": "string",
-          "description": "Release date in ISO 8601 format",
           "format": "date",
-          "examples": ["2024-11-15"]
+          "examples": ["2026-07-04"]
         },
         "downloadUrl": {
           "type": "string",
-          "description": "Direct download URL for APK file",
-          "format": "uri"
+          "description": "Full URL to the APK (https:// or file:// for testing)"
         },
         "sha256": {
           "type": "string",
-          "description": "SHA256 hash of APK file (lowercase hex)",
-          "pattern": "^[a-f0-9]{64}$"
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 of the APK (lowercase hex)"
         },
         "size": {
           "type": "integer",
-          "description": "File size in bytes",
-          "minimum": 0
+          "minimum": 0,
+          "description": "APK file size in bytes"
         },
         "minAndroidVersion": {
           "type": "integer",
-          "description": "Minimum Android API level",
           "default": 28,
           "minimum": 21
         },
         "changelog": {
           "type": "object",
-          "description": "Changelog in multiple languages",
           "properties": {
-            "en": {
-              "type": "string",
-              "description": "English changelog"
-            },
-            "ru": {
-              "type": "string",
-              "description": "Russian changelog"
-            }
+            "en": { "type": "string" },
+            "ru": { "type": "string" }
+          }
+        },
+        "installScenario": {
+          "type": "string",
+          "description": "Key into scenarios.install (e.g. v1)"
+        },
+        "uninstallScenario": {
+          "type": "string",
+          "description": "Key into scenarios.uninstall (e.g. v1)"
+        }
+      }
+    },
+    "Scenarios": {
+      "type": "object",
+      "properties": {
+        "install": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/StepDefinition" }
+          }
+        },
+        "uninstall": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/StepDefinition" }
           }
         }
+      }
+    },
+    "StepDefinition": {
+      "type": "object",
+      "properties": {
+        "do": { "type": "string" },
+        "title": { "type": "object", "additionalProperties": { "type": "string" } },
+        "command": { "type": "array", "items": { "type": "string" } },
+        "args": { "type": "array", "items": { "type": "string" } },
+        "var": { "type": "object", "additionalProperties": { "type": "string" } },
+        "fatal": { "type": "boolean", "default": true },
+        "retry_count": { "type": "integer", "default": 0, "minimum": 0 },
+        "retry_delay_secs": { "type": "integer", "default": 0, "minimum": 0 }
       }
     }
   }
 }
 ```
 
-## Example releases.json
+## Example manifest.json
 
 ```json
 {
   "schemaVersion": 1,
+  "generatedAt": "2026-07-05T06:00:00Z",
   "releases": [
     {
-      "version": "1.2.0",
-      "channel": "stable",
-      "releaseDate": "2024-11-15",
-      "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.2.0/voboost-1.2.0.apk",
-      "sha256": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd",
+      "component": "app",
+      "track": "production",
+      "version": "1.0.0-beta2",
+      "releasedAt": "2026-07-04",
+      "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.0.0-beta2/voboost-1.0.0-beta2.apk",
+      "sha256": "<lowercase hex 64>",
       "size": 15728640,
       "minAndroidVersion": 28,
-      "changelog": {
-        "en": "- New feature: Quick settings panel\n- Bug fix: Bluetooth connection stability\n- Performance improvements",
-        "ru": "- Новая функция: Панель быстрых настроек\n- Исправление: Стабильность Bluetooth соединения\n- Улучшения производительности"
-      }
+      "changelog": { "en": "...", "ru": "..." },
+      "installScenario": "v1",
+      "uninstallScenario": "v1"
     },
     {
-      "version": "1.3.0-beta.1",
-      "channel": "beta",
-      "releaseDate": "2024-11-20",
-      "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.3.0-beta.1/voboost-1.3.0-beta.1.apk",
-      "sha256": "b2c3d4e5f6789012345678901234567890123456789012345678901234abcde",
-      "size": 16252928,
+      "component": "app",
+      "track": "testing",
+      "version": "1.0.0-beta3",
+      "releasedAt": "2026-07-05",
+      "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.0.0-beta3/voboost-1.0.0-beta3.apk",
+      "sha256": "...",
+      "size": 15800000,
       "minAndroidVersion": 28,
-      "changelog": {
-        "en": "- Beta: New dashboard layout\n- Beta: Voice control integration\n- Experimental features",
-        "ru": "- Бета: Новый макет панели\n- Бета: Интеграция голосового управления\n- Экспериментальные функции"
-      }
+      "changelog": { "en": "...", "ru": "..." }
     },
     {
-      "version": "1.1.0",
-      "channel": "stable",
-      "releaseDate": "2024-10-01",
-      "downloadUrl": "https://github.com/voboost/voboost/releases/download/v1.1.0/voboost-1.1.0.apk",
-      "sha256": "c3d4e5f6789012345678901234567890123456789012345678901234abcdef",
-      "size": 14680064,
+      "component": "inject",
+      "track": "production",
+      "version": "1.0.0-beta2",
+      "releasedAt": "2026-07-04",
+      "downloadUrl": "https://github.com/voboost/voboost-inject/releases/download/v1.0.0-beta2/voboost-inject-1.0.0-beta2.apk",
+      "sha256": "...",
+      "size": 15000000,
       "minAndroidVersion": 28,
-      "changelog": {
-        "en": "- Initial stable release\n- Basic vehicle controls\n- Settings management",
-        "ru": "- Первый стабильный релиз\n- Базовое управление автомобилем\n- Управление настройками"
-      }
+      "changelog": { "en": "...", "ru": "..." }
     }
-  ]
+  ],
+  "scenarios": {
+    "install": {
+      "v1": [ { "do": "root" }, { "do": "install-apk" } ]
+    },
+    "uninstall": {
+      "v1": [ { "do": "uninstall-apk" } ]
+    }
+  }
 }
 ```
 
-## TypeScript Types
+## Component / track semantics
+
+| Field | Values | Meaning |
+|---|---|---|
+| `component` | `app` \| `inject` | Which artifact the entry describes. The installer only installs `app`; the daemon is provisioned via `--daemon-bin` for the initial install and updated OTA by the app. |
+| `track` | `dev` \| `testing` \| `production` | Release track, filtered client-side by a setting (default `production`). A client on `production` never sees `dev`/`testing` entries. |
+
+`component` and `track` are **orthogonal**: a component may appear under
+multiple tracks (e.g. `app` under both `testing` and `production` with
+different versions). This replaces the old `channel: stable|beta` (installer)
+and `channel: app|core` (app) vocabulary collision (design §1.2.4).
+
+## Configurable URL
+
+The manifest URL is configurable at build time via the `MANIFEST_URL`
+environment variable (design §3.5.2). The signature URL is derived by
+replacing `.json` with `.sig`, or overridden explicitly via `MANIFEST_SIG_URL`.
+
+```bash
+# Production (default)
+cargo build
+
+# Local testing with file://
+MANIFEST_URL=file:///path/to/voboost-install/releases/manifest.json \
+MANIFEST_SIG_URL=file:///path/to/voboost-install/releases/manifest.sig \
+cargo build
+```
+
+Both `https://` and `file://` schemes are supported in the fetch layer:
+`https://` → `reqwest`; `file://` → `std::fs::read`.
+
+## TypeScript types
 
 ```typescript
 // src/types/releases.ts
 
+export type ReleaseComponent = 'app' | 'inject';
+export type ReleaseTrack = 'dev' | 'testing' | 'production';
+
 export interface Release {
-  version: string;
-  channel: 'stable' | 'beta';
-  releaseDate: string;
-  downloadUrl: string;
-  sha256: string;
-  size: number;
-  minAndroidVersion?: number;
-  changelog?: {
-    en?: string;
-    ru?: string;
-  };
+    component: ReleaseComponent;
+    track: ReleaseTrack;
+    version: string;
+    releasedAt: string;
+    downloadUrl: string;
+    sha256: string;
+    size: number;
+    minAndroidVersion?: number;
+    changelog?: { en?: string; ru?: string };
+    installScenario?: string;
+    uninstallScenario?: string;
 }
 
 export interface ReleasesManifest {
-  schemaVersion: number;
-  releases: Release[];
+    schemaVersion: number;
+    generatedAt?: string;
+    releases: Release[];
+    scenarios?: Scenarios;
 }
 ```
 
-## Rust Implementation
+## Rust implementation
 
 ```rust
 // src-tauri/src/commands/download.rs
 
-use serde::{Deserialize, Serialize};
-use reqwest;
-use sha2::{Sha256, Digest};
-use std::path::PathBuf;
-use std::fs::File;
-use std::io::{Read, Write};
-use tauri::{AppHandle, Emitter};
-use futures_util::StreamExt;
+const DEFAULT_MANIFEST_URL: &str =
+    "https://raw.githubusercontent.com/voboost/voboost-install/main/releases/manifest.json";
+const DEFAULT_MANIFEST_SIG_URL: &str =
+    "https://raw.githubusercontent.com/voboost/voboost-install/main/releases/manifest.sig";
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Release {
-    pub version: String,
-    pub channel: String,
-    pub release_date: String,
-    pub download_url: String,
-    pub sha256: String,
-    pub size: u64,
-    pub min_android_version: Option<u32>,
-    pub changelog: Option<Changelog>,
+fn get_manifest_url() -> String {
+    option_env!("MANIFEST_URL").unwrap_or(DEFAULT_MANIFEST_URL).to_string()
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Changelog {
-    pub en: Option<String>,
-    pub ru: Option<String>,
+fn get_manifest_sig_url() -> String {
+    option_env!("MANIFEST_SIG_URL").unwrap_or(DEFAULT_MANIFEST_SIG_URL).to_string()
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ReleasesManifest {
-    pub schema_version: u32,
-    pub releases: Vec<Release>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct DownloadProgress {
-    pub downloaded: u64,
-    pub total: u64,
-    pub percentage: f64,
-}
-
-const RELEASES_URL: &str = "https://raw.githubusercontent.com/voboost/voboost-install/main/releases.json";
-
-/// Fetch releases manifest from GitHub
 #[tauri::command]
 pub async fn fetch_releases() -> Result<ReleasesManifest, String> {
-    let response = reqwest::get(RELEASES_URL)
-        .await
-        .map_err(|e| format!("Failed to fetch releases: {}", e))?;
-
-    let manifest: ReleasesManifest = response
-        .json()
-        .await
-        .map_err(|e| format!("Failed to parse releases: {}", e))?;
-
-    Ok(manifest)
-}
-
-/// Download APK file with progress reporting
-#[tauri::command]
-pub async fn download_apk(
-    app: AppHandle,
-    url: String,
-    expected_hash: String,
-) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    let response = client.get(&url)
-        .send()
-        .await
-        .map_err(|e| format!("Download failed: {}", e))?;
-
-    let total_size = response.content_length().unwrap_or(0);
-
-    // Create temp file
-    let temp_dir = std::env::temp_dir();
-    let file_name = url.split('/').last().unwrap_or("voboost.apk");
-    let file_path = temp_dir.join(file_name);
-
-    let mut file = File::create(&file_path)
-        .map_err(|e| format!("Failed to create file: {}", e))?;
-
-    let mut downloaded: u64 = 0;
-    let mut stream = response.bytes_stream();
-
-    while let Some(chunk) = stream.next().await {
-        let chunk = chunk.map_err(|e| format!("Download error: {}", e))?;
-        file.write_all(&chunk)
-            .map_err(|e| format!("Write error: {}", e))?;
-
-        downloaded += chunk.len() as u64;
-
-        // Emit progress event
-        let progress = DownloadProgress {
-            downloaded,
-            total: total_size,
-            percentage: if total_size > 0 {
-                (downloaded as f64 / total_size as f64) * 100.0
-            } else {
-                0.0
-            },
-        };
-
-        let _ = app.emit("download-progress", &progress);
-    }
-
-    // Verify hash
-    let hash = calculate_sha256(&file_path)?;
-    if hash != expected_hash {
-        std::fs::remove_file(&file_path).ok();
-        return Err(format!(
-            "Hash mismatch. Expected: {}, Got: {}",
-            expected_hash, hash
-        ));
-    }
-
-    Ok(file_path.to_string_lossy().to_string())
-}
-
-/// Check if APK already exists and verify hash
-#[tauri::command]
-pub async fn check_existing_apk(
-    version: String,
-    expected_hash: String,
-) -> Result<Option<String>, String> {
-    let temp_dir = std::env::temp_dir();
-    let file_name = format!("voboost-{}.apk", version);
-    let file_path = temp_dir.join(&file_name);
-
-    if !file_path.exists() {
-        return Ok(None);
-    }
-
-    let hash = calculate_sha256(&file_path)?;
-    if hash == expected_hash {
-        Ok(Some(file_path.to_string_lossy().to_string()))
-    } else {
-        // Hash mismatch, delete corrupted file
-        std::fs::remove_file(&file_path).ok();
-        Ok(None)
-    }
-}
-
-/// Calculate SHA256 hash of file
-fn calculate_sha256(path: &PathBuf) -> Result<String, String> {
-    let mut file = File::open(path)
-        .map_err(|e| format!("Failed to open file: {}", e))?;
-
-    let mut hasher = Sha256::new();
-    let mut buffer = [0u8; 8192];
-
-    loop {
-        let bytes_read = file.read(&mut buffer)
-            .map_err(|e| format!("Read error: {}", e))?;
-
-        if bytes_read == 0 {
-            break;
-        }
-
-        hasher.update(&buffer[..bytes_read]);
-    }
-
-    let hash = hasher.finalize();
-    Ok(hex::encode(hash))
+    let manifest_bytes = fetch_bytes(&get_manifest_url()).await?;
+    let sig_bytes = fetch_bytes(&get_manifest_sig_url()).await?;
+    verify_manifest_signature(&manifest_bytes, &sig_bytes)?;
+    serde_json::from_slice(&manifest_bytes)
+        .map_err(|e| format!("Failed to parse manifest: {}", e))
 }
 ```
 
-## TypeScript Service
+## Publishing a release
 
-```typescript
-// src/services/releases.ts
+Use `scripts/publish-release.sh` (design §3.6):
 
-import { invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
-import type { Release, ReleasesManifest } from '../types/releases';
+1. Build the APK.
+2. Compute `sha256` + `size` of the APK.
+3. Load `releases/manifest.json`, upsert the entry (same `component`+`track`
+   → replace), bump `generatedAt`.
+4. Write `releases/manifest.json`, sign with `config/release-private.pem`
+   → `releases/manifest.sig` (detached ed25519).
+5. For production: `git commit` + `git push` (raw URL updates within ~5 min).
+6. For local testing: no push needed — the `file://` URL points at the working
+   copy, so the next client fetch sees the new manifest instantly.
 
-export interface DownloadProgress {
-  downloaded: number;
-  total: number;
-  percentage: number;
-}
+## Backward compatibility
 
-export async function fetchReleases(): Promise<ReleasesManifest> {
-  return invoke('fetch_releases');
-}
-
-export async function downloadApk(
-  url: string,
-  expectedHash: string,
-  onProgress?: (progress: DownloadProgress) => void
-): Promise<string> {
-  // Listen for progress events
-  if (onProgress) {
-    const unlisten = await listen<DownloadProgress>('download-progress', (event) => {
-      onProgress(event.payload);
-    });
-
-    try {
-      const result = await invoke<string>('download_apk', { url, expectedHash });
-      return result;
-    } finally {
-      // Always cleanup listener, whether success or error
-      unlisten();
-    }
-  }
-
-  return invoke('download_apk', { url, expectedHash });
-}
-
-export async function checkExistingApk(
-  version: string,
-  expectedHash: string
-): Promise<string | null> {
-  return invoke('check_existing_apk', { version, expectedHash });
-}
-
-// Helper functions
-
-export function getLatestStable(releases: Release[]): Release | undefined {
-  return releases.find(r => r.channel === 'stable');
-}
-
-export function getLatestBeta(releases: Release[]): Release | undefined {
-  return releases.find(r => r.channel === 'beta');
-}
-
-export function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-export function formatDate(dateString: string, locale: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString(locale === 'ru' ? 'ru-RU' : 'en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-```
-
-## Updating releases.json
-
-When releasing a new version:
-
-1. Build the APK
-2. Calculate SHA256:
-   - Linux/macOS: `sha256sum voboost-1.2.0.apk`
-   - Windows: `certutil -hashfile voboost-1.2.0.apk SHA256`
-3. Upload APK to GitHub Releases
-4. Update `releases.json` with new entry
-5. Commit and push
-
-### GitHub Actions Automation
-
-```yaml
-# .github/workflows/release.yml
-name: Release
-
-on:
-  push:
-    tags:
-      - 'v*'
-
-jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build APK
-        run: ./gradlew assembleRelease
-
-      - name: Calculate SHA256
-        id: hash
-        run: |
-          HASH=$(sha256sum app/build/outputs/apk/release/voboost-*.apk | cut -d' ' -f1)
-          echo "sha256=$HASH" >> $GITHUB_OUTPUT
-
-      - name: Update releases.json
-        run: |
-          # Script to update releases.json with new version
-          python scripts/update-releases.py \
-            --version ${{ github.ref_name }} \
-            --hash ${{ steps.hash.outputs.sha256 }}
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: app/build/outputs/apk/release/voboost-*.apk
-```
+The unified schema is **v1** and replaces the old `releases.json` schema
+entirely. The old `channel: stable|beta` (installer) and `channel: app|core`
+(app) fields are removed; clients must migrate to `component` + `track`. The
+old root `releases.json` file is deleted; the unified manifest in
+`releases/manifest.json` is the single source of truth.

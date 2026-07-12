@@ -162,7 +162,7 @@ voboost-install/
 │           └── mac/
 │               └── adb
 │
-├── scripts/                      # Build and utility scripts
+├── src/build/                      # Build and utility scripts
 │   ├── build-win.sh              # Windows build script
 │   ├── build-mac.sh              # macOS build script
 │   ├── generate-icons.sh         # Convert SVG to PNG/ICO/ICNS
@@ -240,7 +240,7 @@ https://github.com/voboost/voboost/releases/download/v1.2.0/voboost-1.2.0.apk
 Tauri requires PNG icons for bundling, but you can use SVG as source:
 
 1. Place your SVG icon at `src/assets/images/logo.svg`
-2. Run `scripts/generate-icons.sh` to generate PNG versions
+2. Run `src/build/generate-icons.sh` to generate PNG versions
 3. Generated PNGs go to `src-tauri/icons/`
 
 The script uses tools like `rsvg-convert` or `inkscape` to convert SVG to PNG at various sizes.

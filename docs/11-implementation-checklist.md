@@ -212,7 +212,7 @@ lazy_static = "1.4"
 ### 7.3 Release Files
 - [ ] Create initial `releases.json`
 - [ ] Document release process
-- [ ] Create `scripts/update-releases.py`
+- [ ] Create `src/build/update-releases.py`
 
 ---
 
@@ -402,3 +402,18 @@ src-tauri/
 3. **Phase 5 (Assets)** can be done anytime, placeholders work initially
 4. **Phase 6 (Testing)** should be ongoing throughout development
 5. **Phase 7 (Build)** should be set up early to catch issues
+## Part 12: Offline Selection & CLI Auto-Install
+- [x] Update `Cargo.toml`, `package.json`, and `tauri.conf.json` for `tauri-plugin-dialog` and `tauri-plugin-cli`.
+- [x] Implement Local APK Selection in UI
+  - [x] Add "Select local file" button to `DownloadScreen.tsx`.
+  - [x] Open file dialog, select `.apk`.
+  - [x] Update Zustand store (`apkPath`, `downloadStatus: 'ready'`).
+- [x] Implement CLI Auto-Install Mode in Rust
+  - [x] Configure CLI arguments in `tauri.conf.json`. (Superseded: the original `--auto-install`/`--lang` pair was replaced by the unified CLI surface — `--install`/`--restore`/`--uninstall` plus provision artifact and shared flags; see the `cli` capability spec.)
+  - [x] Intercept CLI args in `src-tauri/src/lib.rs` `setup` hook.
+  - [x] Run headless 10-step install sequence.
+
+## Part 13: Move md files
+- [x] Move to `docs/implementation_plan.md`
+- [x] Move to `docs/task.md`
+- [x] Move to `docs/walkthrough.md`
