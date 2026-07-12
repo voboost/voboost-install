@@ -1,5 +1,7 @@
 # Voboost Installer
 
+[English](README.md) | **Русский**
+
 Кроссплатформенный десктопный установщик Android-приложения Voboost для головных устройств автомобилей Voyah. Поддерживает macOS и Windows.
 
 ## Обзор
@@ -510,4 +512,7 @@ VITE_RELEASES_URL=https://raw.githubusercontent.com/voboost/voboost-install/main
 
 ## Лицензия
 
-Этот проект лицензирован в соответствии с GPL v3.0 License - подробности смотрите в файле [LICENSE](LICENSE).
+Двойная лицензия:
+
+- [PolyForm Noncommercial 1.0.0](https://github.com/voboost/voboost-license/blob/main/LICENSE.ru.md) — бесплатно для личного использования
+- [Коммерческая лицензия](https://github.com/voboost/voboost-license/blob/main/COMMERCIAL.ru.md) — требуется для любого коммерческого использования

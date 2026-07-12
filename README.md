@@ -1,5 +1,7 @@
 # Voboost Installer
 
+**English** | [Русский](README.ru.md)
+
 Cross-platform desktop installer for Voboost Android application on Voyah vehicle head units. Supports macOS and Windows.
 
 ## Overview
@@ -510,4 +512,7 @@ For more detailed troubleshooting information, see [docs/16-troubleshooting.md](
 
 ## License
 
-This project is licensed under the GPL v3.0 License - see the [LICENSE](LICENSE) file for details.
+Dual-licensed:
+
+- [PolyForm Noncommercial 1.0.0](https://github.com/voboost/voboost-license/blob/main/LICENSE) — free for personal use
+- [Commercial license](https://github.com/voboost/voboost-license/blob/main/COMMERCIAL.md) — required otherwise
