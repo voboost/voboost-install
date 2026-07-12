@@ -1,0 +1,50 @@
+[
+    { "do": "stop-daemon" },
+    { "do": "root" },
+    { "do": "remount" },
+    {
+        "do": "shell",
+        "title": {
+            "en": "Removing init hook /system/etc/init/voboost.rc",
+            "ru": "Удаление init-хука /system/etc/init/voboost.rc"
+        },
+        "args": [
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "rm -f /system/etc/init/voboost.rc"
+        ],
+        "fatal": false,
+        "retryCount": 1,
+        "retryDelaySecs": 1
+    },
+    {
+        "do": "shell",
+        "title": {
+            "en": "Removing /data/voboost (daemon, agents, manifest, logs)",
+            "ru": "Удаление /data/voboost (демон, агенты, манифест, логи)"
+        },
+        "args": [
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "rm -rf /data/voboost"
+        ],
+        "fatal": false,
+        "retryCount": 1,
+        "retryDelaySecs": 1
+    },
+    {
+        "do": "uninstall-apk",
+        "title": {
+            "en": "Uninstalling ru.voboost",
+            "ru": "Удаление ru.voboost"
+        },
+        "fatal": false,
+        "retryCount": 1,
+        "retryDelaySecs": 1
+    },
+    { "do": "reboot", "fatal": false, "retryCount": 2 }
+]

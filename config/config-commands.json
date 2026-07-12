@@ -1,0 +1,367 @@
+[
+    {
+        "id": "shell",
+        "title": {
+            "en": "Running shell command",
+            "ru": "Выполнение команды оболочки"
+        },
+        "command": ["shell"],
+        "fatal": true,
+        "retryCount": 0,
+        "retryDelaySecs": 0
+    },
+    {
+        "id": "wait-device",
+        "title": {
+            "en": "Waiting for device",
+            "ru": "Ожидание устройства"
+        },
+        "command": ["wait-for-device"],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "wait-package-manager",
+        "title": {
+            "en": "Waiting for package manager",
+            "ru": "Ожидание менеджера пакетов"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "for i in $(seq 1 30); do pm path android 2>/dev/null && exit 0; sleep 1; done; exit 1"
+        ],
+        "fatal": true,
+        "retryCount": 2,
+        "retryDelaySecs": 5
+    },
+    {
+        "id": "root",
+        "title": {
+            "en": "Requesting root access",
+            "ru": "Переключение ADB в режим root"
+        },
+        "command": ["root"],
+        "fatal": false,
+        "retryCount": 5,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "disable-verity",
+        "title": {
+            "en": "Disabling verity",
+            "ru": "Отключение проверки целостности (verity)"
+        },
+        "command": ["disable-verity"],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "reboot",
+        "title": {
+            "en": "Rebooting multimedia system",
+            "ru": "Перезагрузка мультимедиа"
+        },
+        "command": ["reboot"],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "remount",
+        "title": {
+            "en": "Remounting filesystem (R/W)",
+            "ru": "Перемонтирование файловой системы"
+        },
+        "command": ["remount"],
+        "fatal": true,
+        "retryCount": 5,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "emulator-setup",
+        "title": {
+            "en": "Setting up emulator (SELinux permissive)",
+            "ru": "Настройка эмулятора (SELinux permissive)"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "test \"$(getprop ro.kernel.qemu)\" = \"1\" && setenforce 0; exit 0"
+        ],
+        "fatal": false,
+        "retryCount": 1,
+        "retryDelaySecs": 1
+    },
+    {
+        "id": "setenforce",
+        "title": {
+            "en": "Disabling SELinux",
+            "ru": "Отключение SELinux"
+        },
+        "command": ["shell", "setenforce", "0"],
+        "fatal": false,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "install-apk",
+        "title": {
+            "en": "Installing Voboost Application",
+            "ru": "Установка приложения Voboost"
+        },
+        "command": ["install", "-g", "-r", "-d", "{apk}"],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "uninstall-apk",
+        "title": {
+            "en": "Uninstalling Voboost Application",
+            "ru": "Удаление приложения Voboost"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "pm list packages {package} >/dev/null 2>&1 && pm uninstall {package} || exit 0"
+        ],
+        "fatal": true,
+        "retryCount": 2,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "pm-grant",
+        "title": {
+            "en": "Granting permission",
+            "ru": "Выдача разрешения"
+        },
+        "command": ["shell", "pm", "grant", "{package}"],
+        "fatal": false,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "appops-set",
+        "title": {
+            "en": "Setting appops",
+            "ru": "Настройка appops"
+        },
+        "command": ["shell", "appops", "set", "{package}"],
+        "fatal": false,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "settings-put-global",
+        "title": {
+            "en": "Configuring global system setting",
+            "ru": "Настройка системного параметра (global)"
+        },
+        "command": ["shell", "settings", "put", "global"],
+        "fatal": false,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "mkdir-remote",
+        "title": {
+            "en": "Creating remote directory",
+            "ru": "Создание каталога"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "mkdir -p {path} && chown {owner} {path} && chmod {mode} {path}"
+        ],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "push-file",
+        "title": {
+            "en": "Pushing file to device",
+            "ru": "Отправка файла"
+        },
+        "command": ["push", "{local}", "{remote}"],
+        "fatal": true,
+        "retryCount": 2,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "chmod-remote",
+        "title": {
+            "en": "Setting file permissions",
+            "ru": "Установка прав"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "chown -R {owner} {path}; chmod -R {mode} {path}"
+        ],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "write-init-hook",
+        "title": {
+            "en": "Writing init hook",
+            "ru": "Установка init-хука"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "echo \"[voboost] init hook: SDK=$(getprop ro.build.version.sdk) path={hook}\" >&2; grep -qF '# >>> voboost-inject (do not edit)' {hook} 2>/dev/null || cat {hook_local} >> {hook}; chmod 644 {hook} 2>/dev/null; restorecon {hook} 2>/dev/null"
+        ],
+        "fatal": true,
+        "retryCount": 2,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "restore-hook",
+        "title": {
+            "en": "Restoring init hook",
+            "ru": "Восстановление init-хука"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "echo \"[voboost] restore hook: SDK=$(getprop ro.build.version.sdk) path={hook}\" >&2; grep -qF '# >>> voboost-inject (do not edit)' {hook} 2>/dev/null || cat {hook_local} >> {hook}; chmod 644 {hook} 2>/dev/null; restorecon {hook} 2>/dev/null"
+        ],
+        "fatal": true,
+        "retryCount": 2,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "app-zone",
+        "title": {
+            "en": "Creating app zone /data/user/0/ru.voboost",
+            "ru": "Создание зоны приложения /data/user/0/ru.voboost"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "appuid=$(stat -c %u /data/data/ru.voboost 2>/dev/null); appgid=$(stat -c %g /data/data/ru.voboost 2>/dev/null); [ -n \"$appuid\" ] || { appuid=0; appgid=0; }; mkdir -p {app_zone}/staging {app_zone}/logs && chown -R $appuid:$appgid {app_zone} && chmod 700 {app_zone}; printf '%s\\n' '{' '  \"version\": 1,' '  \"startup\": \"boot\",' '  \"log_level\": \"info\",' '  \"agents\": []' '}' > {app_zone}/inject.json && chown $appuid:$appgid {app_zone}/inject.json && chmod 600 {app_zone}/inject.json"
+        ],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "start-daemon",
+        "title": {
+            "en": "Starting daemon",
+            "ru": "Запуск демона"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "/data/voboost/start.sh"
+        ],
+        "fatal": true,
+        "retryCount": 3,
+        "retryDelaySecs": 3
+    },
+    {
+        "id": "stop-daemon",
+        "title": {
+            "en": "Stopping daemon",
+            "ru": "Остановка демона"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "test -x /data/voboost/stop.sh && exec /data/voboost/stop.sh; pkill -f /data/voboost/voboost-inject 2>/dev/null; setprop ctl.stop voboost-inject 2>/dev/null; exit 0"
+        ],
+        "fatal": false,
+        "retryCount": 2,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "verify-daemon",
+        "title": {
+            "en": "Verifying daemon readiness",
+            "ru": "Проверка демона"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "test -f /data/user/0/ru.voboost/inject-status.json && grep -q ready /data/user/0/ru.voboost/inject-status.json"
+        ],
+        "fatal": true,
+        "retryCount": 10,
+        "retryDelaySecs": 3
+    },
+    {
+        "id": "push-release-key",
+        "title": {
+            "en": "Setting ownership on OTA release public key",
+            "ru": "Установка владельца открытого ключа OTA"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "chown $(stat -c %u /data/data/ru.voboost):$(stat -c %g /data/data/ru.voboost) /data/data/ru.voboost/files/config/release-public.pem && chmod 600 /data/data/ru.voboost/files/config/release-public.pem"
+        ],
+        "fatal": true,
+        "retryCount": 2,
+        "retryDelaySecs": 2
+    },
+    {
+        "id": "fix-app-ownership",
+        "title": {
+            "en": "Fixing app data dir ownership",
+            "ru": "Исправление владельца данных приложения"
+        },
+        "command": [
+            "shell",
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "chown -R $(stat -c %u /data/data/ru.voboost):$(stat -c %g /data/data/ru.voboost) /data/data/ru.voboost"
+        ],
+        "fatal": false,
+        "retryCount": 3,
+        "retryDelaySecs": 2
+    }
+]

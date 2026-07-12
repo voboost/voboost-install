@@ -1,0 +1,254 @@
+[
+    { "do": "root" },
+    { "do": "disable-verity" },
+    { "do": "reboot" },
+    {
+        "do": "wait-device",
+        "title": {
+            "en": "Waiting for system to boot",
+            "ru": "Ожидание загрузки"
+        },
+        "retryCount": 45
+    },
+    {
+        "do": "root",
+        "title": {
+            "en": "Requesting root access again",
+            "ru": "Повторное получение root-доступа"
+        }
+    },
+    { "do": "wait-device", "retryCount": 30 },
+    { "do": "wait-package-manager" },
+    { "do": "remount", "fatal": false },
+    { "do": "setenforce" },
+
+    {
+        "do": "mkdir-remote",
+        "title": {
+            "en": "Creating /data/voboost (root:root 700)",
+            "ru": "Создание /data/voboost (root:root 700)"
+        },
+        "var": { "path": "/data/voboost", "owner": "root:root", "mode": "700" }
+    },
+    {
+        "do": "mkdir-remote",
+        "title": {
+            "en": "Creating /data/voboost/agents (root:root 700)",
+            "ru": "Создание /data/voboost/agents (root:root 700)"
+        },
+        "var": { "path": "/data/voboost/agents", "owner": "root:root", "mode": "700" }
+    },
+    {
+        "do": "mkdir-remote",
+        "title": {
+            "en": "Creating /data/voboost/run (root:root 700)",
+            "ru": "Создание /data/voboost/run (root:root 700)"
+        },
+        "var": { "path": "/data/voboost/run", "owner": "root:root", "mode": "700" }
+    },
+    {
+        "do": "mkdir-remote",
+        "title": {
+            "en": "Creating /data/voboost/logs (root:root 700)",
+            "ru": "Создание /data/voboost/logs (root:root 700)"
+        },
+        "var": { "path": "/data/voboost/logs", "owner": "root:root", "mode": "700" }
+    },
+
+    {
+        "do": "push-file",
+        "title": {
+            "en": "Pushing voboost-inject daemon to /data/voboost/",
+            "ru": "Отправка демона voboost-inject в /data/voboost/"
+        },
+        "var": { "local": "{daemon_bin}", "remote": "/data/voboost/voboost-inject" }
+    },
+    {
+        "do": "chmod-remote",
+        "title": {
+            "en": "Setting permissions 700 on /data/voboost/voboost-inject",
+            "ru": "Установка прав 700 на /data/voboost/voboost-inject"
+        },
+        "var": { "path": "/data/voboost/voboost-inject", "owner": "root:root", "mode": "700" }
+    },
+
+    {
+        "do": "push-file",
+        "title": {
+            "en": "Pushing manifest.json to /data/voboost/",
+            "ru": "Отправка manifest.json в /data/voboost/"
+        },
+        "var": { "local": "{manifest}", "remote": "/data/voboost/manifest.json" }
+    },
+    {
+        "do": "chmod-remote",
+        "title": {
+            "en": "Setting permissions 600 on /data/voboost/manifest.json",
+            "ru": "Установка прав 600 на /data/voboost/manifest.json"
+        },
+        "var": { "path": "/data/voboost/manifest.json", "owner": "root:root", "mode": "600" }
+    },
+    {
+        "do": "push-file",
+        "title": {
+            "en": "Pushing manifest.sig to /data/voboost/",
+            "ru": "Отправка manifest.sig в /data/voboost/"
+        },
+        "var": { "local": "{manifest_sig}", "remote": "/data/voboost/manifest.sig" }
+    },
+    {
+        "do": "chmod-remote",
+        "title": {
+            "en": "Setting permissions 600 on /data/voboost/manifest.sig",
+            "ru": "Установка прав 600 на /data/voboost/manifest.sig"
+        },
+        "var": { "path": "/data/voboost/manifest.sig", "owner": "root:root", "mode": "600" }
+    },
+
+    {
+        "do": "push-file",
+        "title": {
+            "en": "Pushing init hook body to /data/voboost/",
+            "ru": "Отправка init-хука в /data/voboost/"
+        },
+        "var": { "local": "{hook_local}", "remote": "/data/voboost/voboost.rc.body" }
+    },
+    {
+        "do": "write-init-hook",
+        "fatal": false,
+        "var": {
+            "hook_local": "/data/voboost/voboost.rc.body",
+            "hook": "/system/etc/init/voboost.rc"
+        }
+    },
+    {
+        "do": "emulator-setup",
+        "title": {
+            "en": "Setting up emulator (SELinux permissive, no-op on real device)",
+            "ru": "Настройка эмулятора (SELinux permissive, no-op на реальном устройстве)"
+        }
+    },
+
+    { "do": "install-apk", "var": { "apk": "{APK}" } },
+
+    {
+        "do": "fix-app-ownership",
+        "title": {
+            "en": "Fixing app data dir ownership",
+            "ru": "Исправление владельца данных приложения"
+        }
+    },
+
+    {
+        "do": "push-file",
+        "title": {
+            "en": "Pushing release-public.pem to /data/data/ru.voboost/files/config/",
+            "ru": "Отправка release-public.pem в /data/data/ru.voboost/files/config/"
+        },
+        "var": {
+            "local": "{release_key}",
+            "remote": "/data/data/ru.voboost/files/config/release-public.pem"
+        }
+    },
+    {
+        "do": "push-release-key"
+    },
+
+    {
+        "do": "appops-set",
+        "title": {
+            "en": "Granting REQUEST_INSTALL_PACKAGES to ru.voboost",
+            "ru": "Выдача REQUEST_INSTALL_PACKAGES для ru.voboost"
+        },
+        "args": ["REQUEST_INSTALL_PACKAGES", "allow"]
+    },
+
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Setting enable_freeform_support=1",
+            "ru": "Установка enable_freeform_support=1"
+        },
+        "args": ["enable_freeform_support", "1"]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Setting force_resizable_activities=1",
+            "ru": "Установка force_resizable_activities=1"
+        },
+        "args": ["force_resizable_activities", "1"]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Setting hidden_api_policy_pre_p_apps=1",
+            "ru": "Установка hidden_api_policy_pre_p_apps=1"
+        },
+        "args": ["hidden_api_policy_pre_p_apps", "1"]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Setting hidden_api_policy_p_apps=1",
+            "ru": "Установка hidden_api_policy_p_apps=1"
+        },
+        "args": ["hidden_api_policy_p_apps", "1"]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Setting hidden_api_policy=1",
+            "ru": "Установка hidden_api_policy=1"
+        },
+        "args": ["hidden_api_policy", "1"]
+    },
+
+    {
+        "do": "shell",
+        "title": {
+            "en": "Writing daemon start script to /data/voboost/start.sh",
+            "ru": "Запись скрипта запуска демона в /data/voboost/start.sh"
+        },
+        "args": [
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "cat > /data/voboost/start.sh << 'EOF'\n#!/system/bin/sh\npgrep -f /data/voboost/voboost-inject >/dev/null 2>&1 && exit 0\nnohup /data/voboost/voboost-inject >/data/voboost/logs/startup.log 2>&1 &\nsleep 3\npgrep -f /data/voboost/voboost-inject >/dev/null\nEOF\nchmod 700 /data/voboost/start.sh"
+        ],
+        "fatal": true,
+        "retryCount": 1,
+        "retryDelaySecs": 1
+    },
+    {
+        "do": "shell",
+        "title": {
+            "en": "Writing daemon stop script to /data/voboost/stop.sh",
+            "ru": "Запись скрипта остановки демона в /data/voboost/stop.sh"
+        },
+        "args": [
+            "su",
+            "0",
+            "sh",
+            "-c",
+            "cat > /data/voboost/stop.sh << 'EOF'\n#!/system/bin/sh\npgrep -f /data/voboost/voboost-inject >/dev/null 2>&1 || exit 0\npkill -f /data/voboost/voboost-inject\nsleep 1\nsetprop ctl.stop voboost-inject 2>/dev/null\npgrep -f /data/voboost/voboost-inject >/dev/null 2>&1 && exit 1 || exit 0\nEOF\nchmod 700 /data/voboost/stop.sh"
+        ],
+        "fatal": true,
+        "retryCount": 1,
+        "retryDelaySecs": 1
+    },
+    {
+        "do": "app-zone",
+        "title": {
+            "en": "Creating app zone /data/user/0/ru.voboost before daemon start",
+            "ru": "Создание зоны приложения /data/user/0/ru.voboost до запуска демона"
+        }
+    },
+    { "do": "start-daemon" },
+    {
+        "do": "verify-daemon",
+        "retryCount": 10,
+        "retryDelaySecs": 3
+    }
+]

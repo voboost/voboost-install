@@ -1,0 +1,171 @@
+[
+    {
+        "do": "root"
+    },
+    {
+        "do": "disable-verity"
+    },
+    {
+        "do": "reboot"
+    },
+    {
+        "do": "wait-device",
+        "title": {
+            "en": "Waiting for system to boot",
+            "ru": "Ожидание загрузки мультимедиа"
+        },
+        "retryCount": 45
+    },
+    {
+        "do": "root",
+        "title": {
+            "en": "Requesting root access again",
+            "ru": "Повторное получение root-доступа"
+        }
+    },
+    {
+        "do": "wait-device",
+        "retryCount": 30
+    },
+    {
+        "do": "remount"
+    },
+    {
+        "do": "setenforce"
+    },
+    {
+        "do": "install-apk",
+        "var": {
+            "apk": "{APK}"
+        }
+    },
+    {
+        "do": "pm-grant",
+        "title": {
+            "en": "Granting permission: SYSTEM_ALERT_WINDOW",
+            "ru": "Выдача разрешения: Окна поверх других приложений"
+        },
+        "args": [
+            "android.permission.SYSTEM_ALERT_WINDOW"
+        ]
+    },
+    {
+        "do": "pm-grant",
+        "title": {
+            "en": "Granting permission: READ_LOGS",
+            "ru": "Выдача разрешения: Чтение логов"
+        },
+        "args": [
+            "android.permission.READ_LOGS"
+        ]
+    },
+    {
+        "do": "pm-grant",
+        "title": {
+            "en": "Granting permission: RECORD_AUDIO",
+            "ru": "Выдача разрешения: Запись звука"
+        },
+        "args": [
+            "android.permission.RECORD_AUDIO"
+        ]
+    },
+    {
+        "do": "pm-grant",
+        "title": {
+            "en": "Granting permission: WRITE_EXTERNAL_STORAGE",
+            "ru": "Выдача разрешения: Запись во внутреннюю память"
+        },
+        "args": [
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        ]
+    },
+    {
+        "do": "pm-grant",
+        "title": {
+            "en": "Granting permission: WRITE_SECURE_SETTINGS",
+            "ru": "Выдача разрешения: Изменение системных настроек"
+        },
+        "args": [
+            "android.permission.WRITE_SECURE_SETTINGS"
+        ]
+    },
+    {
+        "do": "appops-set",
+        "title": {
+            "en": "Granting permission: REQUEST_INSTALL_PACKAGES",
+            "ru": "Выдача разрешения: Установка пакетов"
+        },
+        "args": [
+            "REQUEST_INSTALL_PACKAGES",
+            "allow"
+        ]
+    },
+    {
+        "do": "appops-set",
+        "title": {
+            "en": "Granting permission: REQUEST_INSTALL_PACKAGES (User 0)",
+            "ru": "Выдача разрешения: Установка пакетов (Пользователь 0)"
+        },
+        "args": [
+            "REQUEST_INSTALL_PACKAGES",
+            "allow",
+            "--user",
+            "0"
+        ]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Configuring system: Enable Freeform Support",
+            "ru": "Настройка системы: Поддержка плавающих окон"
+        },
+        "args": [
+            "enable_freeform_support",
+            "1"
+        ]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Configuring system: Force Resizable Activities",
+            "ru": "Настройка системы: Изменение размера окон"
+        },
+        "args": [
+            "force_resizable_activities",
+            "1"
+        ]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Configuring system: Hidden API Policy (Pre-P)",
+            "ru": "Настройка системы: Скрытые API (Pre-P)"
+        },
+        "args": [
+            "hidden_api_policy_pre_p_apps",
+            "1"
+        ]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Configuring system: Hidden API Policy (P)",
+            "ru": "Настройка системы: Скрытые API (P)"
+        },
+        "args": [
+            "hidden_api_policy_p_apps",
+            "1"
+        ]
+    },
+    {
+        "do": "settings-put-global",
+        "title": {
+            "en": "Configuring system: Hidden API Policy",
+            "ru": "Настройка системы: Скрытые API"
+        },
+        "args": [
+            "hidden_api_policy",
+            "1"
+        ]
+    }
+]

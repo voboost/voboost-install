@@ -1,0 +1,17 @@
+[
+    { "do": "root" },
+    { "do": "remount" },
+    {
+        "do": "push-file",
+        "var": { "local": "{hook_local}", "remote": "/data/local/tmp/voboost.rc.body" }
+    },
+    {
+        "do": "restore-hook",
+        "var": {
+            "hook_local": "/data/local/tmp/voboost.rc.body",
+            "hook": "/system/etc/init/voboost.rc"
+        }
+    },
+    { "do": "start-daemon" },
+    { "do": "verify-daemon" }
+]
